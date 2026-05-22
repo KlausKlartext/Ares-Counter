@@ -47,12 +47,10 @@ resources.forEach(resource => {
 
 function updateVisuals(value, refs, cardIcon, cardNumber) {
   refs.icon.classList.toggle("active", value > 0);
-
   refs.number.textContent = formatNumber(value);
   refs.number.classList.toggle("hidden", value === 0);
 
   cardIcon.classList.toggle("active", value > 0);
-
   cardNumber.textContent = formatNumber(value);
   cardNumber.classList.toggle("hidden", value === 0);
 }
