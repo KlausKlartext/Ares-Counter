@@ -14,10 +14,9 @@ html,
 body {
   margin: 0;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
 
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 
   background: var(--bg);
   color: var(--text);
@@ -32,10 +31,18 @@ body {
 }
 
 body {
-  padding: 10px;
+  padding: 18px 10px 18px 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  gap: 12px;
 }
 
 #tracker {
+  flex: 1;
+
   display: grid;
   grid-template-columns: 1fr;
 
@@ -191,19 +198,16 @@ button {
 
   height: 58px;
 
-  margin-top: 10px;
-  margin-bottom: 4px;
-
   border-radius: 18px;
 
-  background: linear-gradient(to bottom, #ef4444, #dc2626);
+  background: linear-gradient(to bottom, #dc5a5a, #b91c1c);
   color: white;
 
   font-size: 1.7rem;
   font-weight: 700;
 
   box-shadow:
-    0 5px 0 #991b1b,
+    0 5px 0 #7f1d1d,
     0 8px 14px rgba(0,0,0,0.35);
 
   transition:
@@ -216,7 +220,7 @@ button {
   transform: translateY(4px) scale(0.98);
 
   box-shadow:
-    0 1px 0 #991b1b,
+    0 1px 0 #7f1d1d,
     0 2px 5px rgba(0,0,0,0.3);
 
   filter: brightness(1.08);
