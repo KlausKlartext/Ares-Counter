@@ -12,6 +12,7 @@ const resources = [
 ];
 
 const tracker = document.getElementById("tracker");
+const overview = document.getElementById("overview");
 
 function getStoredValue(id) {
   return parseInt(localStorage.getItem(id)) || 0;
@@ -25,73 +26,91 @@ function formatNumber(value) {
   return value.toString().padStart(2, "0");
 }
 
-function updateVisuals(value, valueEl, iconEls, overflowEl) {
-  valueEl.textContent = formatNumber(value);
+const overviewRefs = {};
 
-  valueEl.classList.toggle("zero", value === 0);
-  valueEl.classList.toggle("overflow", value > 6);
+resources.forEach(resource => {
+  const item = document.createElement("div");
+  item.className = "overview-item";
 
-  overflowEl.classList.toggle("visible", value > 6);
+  item.innerHTML = `
+    <img class="overview-icon" src="${resource.icon}">
+    <div class="overview-number hidden">00</div>
+  `;
 
-  iconEls.forEach((icon, index) => {
-    if (index < Math.min(value, 6)) {
-      icon.classList.remove("inactive");
-    } else {
-      icon.classList.add("inactive");
-    }
-  });
+  overview.appendChild(item);
+
+  overviewRefs[resource.id] = {
+    icon: item.querySelector(".overview-icon"),
+    number: item.querySelector(".overview-number")
+  };
+});
+
+function updateVisuals(value, refs, cardIcon, cardNumber) {
+  refs.icon.classList.toggle("active", value > 0);
+
+  refs.number.textContent = formatNumber(value);
+  refs.number.classList.toggle("hidden", value === 0);
+
+  cardIcon.classList.toggle("active", value > 0);
+
+  cardNumber.textContent = formatNumber(value);
+  cardNumber.classList.toggle("hidden", value === 0);
 }
 
 resources.forEach(resource => {
   let value = getStoredValue(resource.id);
 
   const card = document.createElement("div");
-  card.className = "counter";
-
-  const visibleIcons = 6;
-
-  const iconsHtml = Array.from({ length: visibleIcons })
-    .map(() => `
-      <img class="icon inactive" src="${resource.icon}">
-    `)
-    .join("");
+  card.className = "control-card";
 
   card.innerHTML = `
-    <div class="left">
-      <div class="value">00</div>
-
-      <div class="icons">
-        ${iconsHtml}
-        <div class="overflow-indicator">+</div>
-      </div>
+    <div class="control-left">
+      <img class="control-icon" src="${resource.icon}">
+      <div class="control-number hidden">00</div>
     </div>
 
-    <div class="controls">
-      <button class="adjust minus">−</button>
-      <button class="adjust plus">+</button>
+    <div class="control-buttons">
+      <button class="adjust plus">▲</button>
+      <button class="adjust minus">▼</button>
     </div>
   `;
 
-  const valueEl = card.querySelector(".value");
-  const iconEls = [...card.querySelectorAll(".icon")];
-  const overflowEl = card.querySelector(".overflow-indicator");
+  const cardIcon = card.querySelector(".control-icon");
+  const cardNumber = card.querySelector(".control-number");
 
-  updateVisuals(value, valueEl, iconEls, overflowEl);
+  updateVisuals(
+    value,
+    overviewRefs[resource.id],
+    cardIcon,
+    cardNumber
+  );
+
+  card.querySelector(".plus").addEventListener("click", () => {
+    value++;
+
+    updateVisuals(
+      value,
+      overviewRefs[resource.id],
+      cardIcon,
+      cardNumber
+    );
+
+    saveValue(resource.id, value);
+  });
 
   card.querySelector(".minus").addEventListener("click", () => {
     if (value > 0) {
       value--;
 
-      updateVisuals(value, valueEl, iconEls, overflowEl);
+      updateVisuals(
+        value,
+        overviewRefs[resource.id],
+        cardIcon,
+        cardNumber
+      );
+
       saveValue(resource.id, value);
     }
-  });
-
-  card.querySelector(".plus").addEventListener("click", () => {
-    value++;
-
-    updateVisuals(value, valueEl, iconEls, overflowEl);
-    saveValue(resource.id, value);
   });
 
   tracker.appendChild(card);
